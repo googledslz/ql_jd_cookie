@@ -1,11 +1,11 @@
 name: Build C# Project
 
-on:
+于:
   push:
-    branches:
+    分支:
       - main   # 或者你选择的其他分支
   pull_request:
-    branches:
+    分支:
       - main   # 或者你选择的其他分支
 
 jobs:
@@ -31,7 +31,7 @@ jobs:
       run: dotnet publish --configuration Release --output ./output
 
     - name: Upload build artifacts
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: JD_Get-build
         path: ./output
