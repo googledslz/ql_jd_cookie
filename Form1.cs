@@ -34,9 +34,9 @@ namespace JD_Get
             InitializeComponent();
             Control.CheckForIllegalCrossThreadCalls = false;
             GetQLConfig();
-          
 
-
+            // 设置代理地址和端口
+            SetProxy("8.134.133.196", 16666);
         }
 
 
@@ -67,6 +67,13 @@ namespace JD_Get
           
         }
 
+        // 设置代理
+        private void SetProxy(string proxyHost, int proxyPort)
+        {
+            var settings = new CefSettings();
+            settings.CefCommandLineArgs.Add("proxy-server", $"{proxyHost}:{proxyPort}");
+            Cef.Initialize(settings);
+        }
 
         private void LoginInitAsync()
         { 
