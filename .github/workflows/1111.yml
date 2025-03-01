@@ -27,4 +27,4 @@ jobs:
         uses: actions/upload-artifact@v4  # 上传编译好的文件
         with:
           name: JD_Get_Build
-          path: JD_Get/bin/Release/  # 指定上传路径
+          path: JD_Get/bin/Release/  # 确保这个路径存在
