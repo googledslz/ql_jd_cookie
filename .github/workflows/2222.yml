@@ -1,33 +1,37 @@
 name: Build C# Project 22222
 
 on:
-  workflow_dispatch:  # 仅手动触发
+  workflow_dispatch:
 
 jobs:
   build:
-    runs-on: windows-latest  # 使用 Windows 运行环境
+    runs-on: windows-latest
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4  # 获取代码
+        uses: actions/checkout@v4
 
       - name: Setup MSBuild
-        uses: microsoft/setup-msbuild@v1  # 安装 MSBuild
+        uses: microsoft/setup-msbuild@v1
 
       - name: Restore NuGet packages
-        run: nuget restore JD_Get.sln  # 还原 NuGet 依赖
+        run: nuget restore JD_Get.sln
 
       - name: Build project
-        run: msbuild JD_Get.sln /p:Configuration=Release /p:Platform="Any CPU"  # 确保 Release 版本被生成
+        run: msbuild JD_Get.sln /p:Configuration=Release /p:Platform="Any CPU" -verbosity:diagnostic
 
-      - name: Debug Check Compilation Output
-        run: Get-ChildItem -Path JD_Get\bin\ -Recurse  # 确保 bin 目录下有内容
+      - name: Check all directories after build
+        run: Get-ChildItem -Path . -Recurse
 
-      - name: Debug Find EXE Location
-        run: Get-ChildItem -Path JD_Get\ -Filter "*.exe" -Recurse  # 确保 EXE 生成了
+      - name: Ensure output directory exists
+        run: |
+          if (!(Test-Path "JD_Get/bin/Release/")) { 
+            Write-Error "Error: Build output directory does not exist!"
+            exit 1 
+          }
 
       - name: Publish artifact
         uses: actions/upload-artifact@v4
         with:
           name: JD_Get_Build
-          path: JD_Get/bin/Release/  # 确保路径正确
+          path: JD_Get/bin/Release/
