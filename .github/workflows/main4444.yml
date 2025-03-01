@@ -1,6 +1,6 @@
 name: Build C# Project
 
-于:
+ON:
   workflow_dispatch:  # 仅支持手动触发
 
 jobs:
