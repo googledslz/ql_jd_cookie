@@ -25,6 +25,7 @@ jobs:
         run: msbuild JD_Get.sln /p:Configuration=Release  # 使用 MSBuild 编译项目
 
       - name: Debug List Output Files
+        shell: cmd
         run: dir JD_Get\bin\Release\ /s  # 调试，列出编译后的文件
 
       - name: Publish artifact
