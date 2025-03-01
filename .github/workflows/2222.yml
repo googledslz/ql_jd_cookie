@@ -23,7 +23,7 @@ jobs:
       - name: Debug Check Compilation Output
         run: Get-ChildItem -Path JD_Get\bin\ -Recurse  # 确保 bin 目录下有内容
 
-      - name: Debug: Find EXE Location
+      - name: Debug Find EXE Location
         run: Get-ChildItem -Path JD_Get\ -Filter "*.exe" -Recurse  # 确保 EXE 生成了
 
       - name: Publish artifact
