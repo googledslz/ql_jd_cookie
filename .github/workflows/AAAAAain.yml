@@ -1,12 +1,11 @@
-name: Build C# ProjectAAAAA
-
+name: Build C# Project
 
 on:
   workflow_dispatch:
 
 jobs:
   build:
-    runs-on: windows-latest  # 切换到 Windows 运行环境
+    runs-on: windows-latest  # Windows 运行环境，支持 .NET Framework 4.8
 
     steps:
       - name: Checkout repository
@@ -15,15 +14,17 @@ jobs:
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v1  # 安装 MSBuild
 
-      - name: Restore dependencies
+      - name: Restore NuGet packages
         run: nuget restore JD_Get.sln  # 还原 NuGet 依赖
 
       - name: Build project
-        run: msbuild JD_Get.sln /p:Configuration=Release  # 使用 MSBuild 编译项目
+        run: msbuild JD_Get.sln /p:Configuration=Release  # 使用 MSBuild 编译
+
+      - name: Debug: List Output Files
+        run: dir JD_Get\bin\Release\ /s  # 调试，列出编译后的文件
 
       - name: Publish artifact
         uses: actions/upload-artifact@v4
         with:
           name: JD_Get_Build
-          path: |
-            JD_Get/bin/Release/
+          path: JD_Get/bin/Release/  # 上传正确的编译文件
