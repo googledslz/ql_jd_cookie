@@ -26,5 +26,5 @@ jobs:
       - name: Publish artifact
         uses: actions/upload-artifact@v4  # 上传编译好的文件
         with:
-          name: JD_Get_Build
-          path: JD_Get/bin/Release/  # 确保这个路径存在
+          name: JD_Get_Build  # 确保 `name:` 缩进正确
+          path: JD_Get/bin/Release/  # 确保 `path:` 缩进正确
