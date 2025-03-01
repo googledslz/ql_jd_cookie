@@ -16,6 +16,10 @@ jobs:
 
       - name: Restore NuGet packages
         run: nuget restore JD_Get.sln  # 还原 NuGet 依赖
+        
+      - name: Ensure Output Directory Exists
+        run: mkdir -p JD_Get\bin\Release\
+
 
       - name: Build project
         run: msbuild JD_Get.sln /p:Configuration=Release  # 使用 MSBuild 编译项目
