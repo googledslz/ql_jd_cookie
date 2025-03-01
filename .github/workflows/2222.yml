@@ -1,37 +1,47 @@
 name: Build C# Project 22222
 
 on:
-  workflow_dispatch:
+  workflow_dispatch:  # 手动触发工作流
 
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: windows-latest  # 使用最新版本的 Windows 环境
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4  # 检出代码仓库
 
       - name: Setup MSBuild
-        uses: microsoft/setup-msbuild@v1
+        uses: microsoft/setup-msbuild@v1  # 设置 MSBuild 环境
 
       - name: Restore NuGet packages
-        run: nuget restore JD_Get.sln
-
-      - name: Build project
-        run: msbuild JD_Get.sln /p:Configuration=Release /p:Platform="Any CPU" -verbosity:diagnostic
-
-      - name: Check all directories after build
-        run: Get-ChildItem -Path . -Recurse
-
-      - name: Ensure output directory exists
         run: |
-          if (!(Test-Path "JD_Get/bin/Release/")) { 
-            Write-Error "Error: Build output directory does not exist!"
-            exit 1 
+          nuget restore JD_Get.sln  # 恢复 NuGet 包
+          if ($LASTEXITCODE -ne 0) {  # 检查 NuGet 还原是否成功
+            Write-Error "Error: NuGet restore failed!"  # 如果失败，输出错误信息
+            exit 1  # 退出并标记失败
           }
 
+      - name: Build project with MSBuild
+        run: |
+          msbuild JD_Get.sln /p:Configuration=Release /p:Platform="Any CPU" -verbosity:detailed  # 使用 MSBuild 编译项目，设置为 Release 配置
+          if ($LASTEXITCODE -ne 0) {  # 检查 MSBuild 是否成功
+            Write-Error "Error: MSBuild failed!"  # 如果失败，输出错误信息
+            exit 1  # 退出并标记失败
+          }
+
+      - name: Verify output directory exists
+        run: |
+          if (!(Test-Path "JD_Get/bin/Release/")) {  # 检查是否生成了输出目录
+            Write-Error "Error: Build output directory does not exist!"  # 如果目录不存在，输出错误信息
+            exit 1  # 退出并标记失败
+          }
+
+      - name: List all files after build (Debugging)
+        run: Get-ChildItem -Path . -Recurse  # 列出所有文件，方便调试，查看输出目录是否有生成文件
+
       - name: Publish artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v4  # 上传构建产物
         with:
-          name: JD_Get_Build
-          path: JD_Get/bin/Release/
+          name: JD_Get_Build  # 设置上传的产物名称
+          path: JD_Get/bin/Release/  # 上传构建结果目录
