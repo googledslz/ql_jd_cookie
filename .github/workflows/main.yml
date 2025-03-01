@@ -14,7 +14,7 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '8.0.x'  # 选择 .NET 版本（根据你的项目调整）
+          dotnet-version: '8.0.4'  # 选择 .NET 版本（根据你的项目调整）
 
       - name: Restore dependencies
         run: dotnet restore JD_Get.csproj  # 还原 NuGet 依赖
