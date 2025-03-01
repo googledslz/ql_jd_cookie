@@ -1,0 +1,30 @@
+name: Build C# Project
+
+on:
+  workflow_dispatch:  # 仅支持手动触发
+
+jobs:
+  build:
+    runs-on: windows-latest  # 使用 Windows 运行环境来编译 .NET Framework 项目
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4  # 获取代码
+
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v1  # 安装 MSBuild
+
+      - name: Restore NuGet packages
+        run: nuget restore JD_Get.sln  # 还原 NuGet 依赖
+
+      - name: Build project
+        run: msbuild JD_Get.sln /p:Configuration=Release  # 使用 MSBuild 编译项目
+
+      - name: Debug: List Output Files
+        run: dir JD_Get\bin\Release\ /s  # 调试，列出编译后的文件
+
+      - name: Publish artifact
+        uses: actions/upload-artifact@v4  # 上传编译好的文件
+        with:
+          name: JD_Get_Build
+          path: JD_Get/bin/Release/  # 指定上传路径
