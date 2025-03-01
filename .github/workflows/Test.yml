@@ -1,30 +1,50 @@
 name: Build and Test
 
+
 on:
   push:
     branches:
-      - main
+      - main  # 触发构建的分支
   pull_request:
     branches:
       - main
 
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: windows-latest  # 使用 Windows 环境，默认包含 .NET Framework 4.8
 
     steps:
-    - uses: actions/checkout@v2
+      # 1. 检出代码
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: '4.8.x'  # 根据你的项目需求选择合适的 .NET 版本
+      # 2. 设置 MSBuild 路径（可选，确保使用正确的 MSBuild）
+      - name: Set MSBuild Path
+        shell: pwsh
+        run: |
+          $msbuildPath = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\2022\Enterprise\MSBuild\Current\Bin\MSBuild.exe"
+          if (Test-Path $msbuildPath) {
+              echo "MSBuild Path: $msbuildPath"
+              echo "MSBUILD_PATH=$msbuildPath" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          } else {
+              echo "MSBuild not found at $msbuildPath"
+              exit 1
+          }
 
-    - name: Restore dependencies
-      run: dotnet restore
+      # 3. 恢复 NuGet 包
+      - name: Restore NuGet Packages
+        run: nuget restore JD_Get.sln
 
-    - name: Build
-      run: dotnet build --configuration Release
+      # 4. 构建项目
+      - name: Build Project
+        run: msbuild JD_Get.sln /p:Configuration=Release /p:Platform="Any CPU"
 
-    - name: Test
-      run: dotnet test
+      # 5. 运行测试（如果有测试项目）
+      - name: Run Tests
+        run: |
+          $testDll = Get-ChildItem -Recurse -Filter *Tests.dll | Select-Object -First 1 -ExpandProperty FullName
+          if ($testDll) {
+              vstest.console.exe $testDll
+          } else {
+              echo "No test DLL found."
+          }
