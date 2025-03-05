@@ -1,11 +1,11 @@
 name: Build and Upload deep
 
-on:
+于:
   push:
-    branches:
+    分支:
       - main  # 触发工作流的分支
   pull_request:
-    branches:
+    分支:
       - main
 
 jobs:
@@ -26,7 +26,7 @@ jobs:
         run: msbuild JD_Get.sln /p:Configuration=Release /p:Platform="Any CPU"  # 构建项目
 
       - name: Debug - Print current directory
-        run: echo "Current directory: $(pwd)"  # 打印当前工作目录
+        run: echo Current directory $(pwd)  # 打印当前工作目录
 
       - name: Debug - List files in Release directory
         run: ls -R JD_Get/bin/Release  # 递归列出 Release 目录下的文件
