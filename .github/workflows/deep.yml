@@ -1,6 +1,6 @@
 name: Build and Upload deep
 
-于:
+on:
   push:
     分支:
       - main  # 触发工作流的分支
