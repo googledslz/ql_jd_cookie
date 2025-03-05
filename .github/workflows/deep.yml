@@ -1,0 +1,42 @@
+name: Build and Upload deep
+
+on:
+  push:
+    branches:
+      - main  # 触发工作流的分支
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: windows-latest  # 使用 Windows 环境
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4  # 检出代码
+
+      - name: Set up MSBuild
+        uses: microsoft/setup-msbuild@v1  # 设置 MSBuild 环境
+
+      - name: Restore NuGet packages
+        run: nuget restore JD_Get.sln  # 恢复 NuGet 包（假设你的解决方案文件是 JD_Get.sln）
+
+      - name: Build project
+        run: msbuild JD_Get.sln /p:Configuration=Release /p:Platform="Any CPU"  # 构建项目
+
+      - name: Debug - Print current directory
+        run: echo "Current directory: $(pwd)"  # 打印当前工作目录
+
+      - name: Debug - List files in Release directory
+        run: ls -R JD_Get/bin/Release  # 递归列出 Release 目录下的文件
+
+      - name: List files in Release directory (Windows)
+        run: dir JD_Get\bin\Release\ /s  # Windows 下列出 Release 目录下的文件
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-files  # Artifact 名称
+          path: JD_Get\bin\Release\  # 上传的路径
+          if-no-files-found: error  # 如果没有文件，报错
